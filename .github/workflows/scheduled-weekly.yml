@@ -1,0 +1,23 @@
+# Empire OS — Weekly report (Sunday 18:00 UTC). Runs from GitHub; writes to Supabase.
+name: Scheduled weekly report
+on:
+  schedule:
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-cache: 'npm'
+          cache-dependency-path: package.json
+      - run: npm ci
+      - name: Run weekly-report job
+        run: node scripts/run-job.js weekly-report
+        env:
+          EMPIRE_ROOT: ${{ github.workspace }}
+          EMPIRE_PROJECT_NAME: empire
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
