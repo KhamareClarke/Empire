@@ -1,0 +1,14 @@
+# Empire OS
+.env
+.monitoring/
+node_modules/
+
+# Repo paths (junctions/separate repos — not part of Empire code)
+/khamareclarke.com
+/omniwtms
+/myapproved
+/adstarter
+/seoinforce
+/identitymarketing
+/leveragejournal
+/leverageacademy

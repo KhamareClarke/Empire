@@ -1,0 +1,20 @@
+{
+  "name": "empire-os",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Empire OS — Sovereign Control Panel orchestration",
+  "bin": {
+    "empire": "./bin/empire.js",
+    "tool": "./bin/empire.js"
+  },
+  "scripts": {
+    "test": "node tests/run-phase11-order.js",
+    "test:db": "node tests/run-db-write-test.js",
+    "verify": "node scripts/verify-all-phases.js",
+    "phases": "node scripts/verify-all-phases.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "sovereign": "khamareclarke.com",
+  "repos": [
+    { "id": "khamareclarke", "path": "khamareclarke.com", "name": "KhamareClarke.com", "role": "sovereign" },
+    { "id": "omniwtms", "path": "omniwtms", "name": "Omni WTMS" },
+    { "id": "myapproved", "path": "myapproved", "name": "MyApproved" },
+    { "id": "adstarter", "path": "adstarter", "name": "AdStarter" },
+    { "id": "seoinforce", "path": "seoinforce", "name": "SEO Inforce" },
+    { "id": "identitymarketing", "path": "identitymarketing", "name": "Identity Marketing" },
+    { "id": "leveragejournal", "path": "leveragejournal", "name": "Leverage Journal" },
+    { "id": "leverageacademy", "path": "leverageacademy", "name": "Leverage Academy" }
+  ],
+  "globalSkillsPath": "~/.khamare-clarke/global-skills",
+  "sharedBridgePath": "shared/empire-bridge",
+  "env": { "EMPIRE_ENV": "development", "LOG_LEVEL": "info" }
+}

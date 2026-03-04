@@ -1,0 +1,11 @@
+{
+  "name": "@empire/bridge",
+  "version": "1.0.0",
+  "description": "Shared Empire OS bridge — pushLead, pushReport, logAgentActivity",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.x"
+  }
+}

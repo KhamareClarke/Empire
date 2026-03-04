@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire Agent Contract",
+  "description": "Every agent must log start/finish, push leads/reports if applicable, and follow this output schema. No silent execution.",
+  "required": ["agent_id", "status", "timestamp"],
+  "type": "object",
+  "properties": {
+    "agent_id": { "type": "string", "description": "e.g. seo-audit, copywriting" },
+    "action": { "type": "string", "description": "e.g. run, audit, generate" },
+    "status": { "type": "string", "enum": ["started", "finished", "failed"] },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "project_id": { "type": "string" },
+    "leads": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/lead" }
+    },
+    "reports": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/report" }
+    },
+    "error_message": { "type": "string" },
+    "payload": { "type": "object" }
+  },
+  "definitions": {
+    "lead": {
+      "type": "object",
+      "properties": {
+        "source": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "payload": { "type": "object" }
+      }
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "report_type": { "type": "string" },
+        "severity": { "type": "string", "enum": ["info", "warning", "error"] },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "payload": { "type": "object" }
+      }
+    }
+  }
+}
