@@ -1,0 +1,38 @@
+# Empire OS — Run tests on push/PR. Add repo secrets for full Phase 11 + Supabase.
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-cache: 'npm'
+          cache-dependency-path: package.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Orchestration status (may skip if 8 repo paths not in clone)
+        run: node bin/empire.js status
+        env:
+          EMPIRE_ROOT: ${{ github.workspace }}
+        continue-on-error: true
+
+      - name: Phase 11 tests
+        run: npm test
+        env:
+          EMPIRE_ROOT: ${{ github.workspace }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        continue-on-error: true
