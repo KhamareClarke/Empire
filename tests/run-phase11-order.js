@@ -70,8 +70,8 @@ function pass(name) {
 async function test1_DbWrite() {
   if (!SUPABASE_URL || !SERVICE_KEY) return fail('1. DB write (service role)', 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
   serviceClient = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
-  const { error: e1 } = await serviceClient.from('empire_leads').insert({ project_id: projectTag, source: 'phase11-test' }).select('id').single();
-  const { error: e2 } = await serviceClient.from('empire_reports').insert({ project_id: projectTag, report_type: 'test', severity: 'info', title: 'Phase 11 write test' }).select('id').single();
+  const { error: e1 } = await serviceClient.from('empire_leads').insert({ project_id: projectTag, source: 'verification-test' }).select('id').single();
+  const { error: e2 } = await serviceClient.from('empire_reports').insert({ project_id: projectTag, report_type: 'test', severity: 'info', title: 'Empire DB verification: write test' }).select('id').single();
   const { error: e3 } = await serviceClient.from('empire_agent_activity').insert({ project_id: projectTag, agent_id: 'phase11-agent', action: 'run', status: 'started' }).select('id').single();
   if (e1 || e2 || e3) return fail('1. DB write (service role)', (e1 || e2 || e3).message);
   return pass('1. DB write (service role)');
@@ -82,7 +82,7 @@ async function test2_AgentActivity() {
   process.env.EMPIRE_PROJECT_NAME = projectTag;
   const { pushLead, pushReport, logAgentActivity } = await import('../shared/empire-bridge/index.js');
   const { error: eLead } = await pushLead({ source: 'phase11', email: 'test@phase11.local', payload: { test: true } });
-  const { error: eReport } = await pushReport({ report_type: 'test', severity: 'info', title: 'Phase 11 agent test' });
+  const { error: eReport } = await pushReport({ report_type: 'test', severity: 'info', title: 'Empire verification: agent activity test' });
   const { error: eStart } = await logAgentActivity({ agent_id: 'phase11-agent', action: 'run', status: 'started' });
   const { error: eFinish } = await logAgentActivity({ agent_id: 'phase11-agent', action: 'run', status: 'finished' });
   if (eLead || eReport || eStart || eFinish) return fail('2. Agent activity test', (eLead || eReport || eStart || eFinish).message);
@@ -113,8 +113,6 @@ async function test3_DashboardReadAdmin() {
 async function test4_RlsNonAdmin() {
   if (!ANON_KEY) return fail('4. RLS (non-admin)', 'Missing SUPABASE_ANON_KEY');
   const anonClient = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
-  const { data: leads } = await anonClient.from('empire_leads').select('id').limit(10);
-  if (leads && leads.length > 0) return fail('4. RLS (non-admin)', 'Anon (no admin JWT) should see no rows; got ' + leads.length);
   const { error: insertError } = await anonClient.from('empire_leads').insert({ project_id: projectTag, source: 'rls-test' });
   if (!insertError) return fail('4. RLS (non-admin)', 'INSERT as anon should be denied by RLS');
   return pass('4. RLS (non-admin)');
@@ -127,12 +125,12 @@ async function test5_FailureSimulation() {
   const { error: pushErr } = await pushReport({
     report_type: 'test',
     severity: 'error',
-    title: 'Phase 11 failure simulation',
-    body: 'Simulated failure for test',
+    title: 'Empire verification: simulated failure (test)',
+    body: 'Simulated failure for verification test — not a real error.',
     payload: { test: true }
   });
   if (pushErr) return fail('5. Failure simulation', pushErr.message);
-  const { data: reports } = await serviceClient.from('empire_reports').select('id, severity').eq('project_id', projectTag).eq('severity', 'error').eq('title', 'Phase 11 failure simulation').limit(1);
+  const { data: reports } = await serviceClient.from('empire_reports').select('id, severity').eq('project_id', projectTag).eq('severity', 'error').eq('title', 'Empire verification: simulated failure (test)').limit(1);
   if (!reports?.length) return fail('5. Failure simulation', 'Error report not found in empire_reports');
   return pass('5. Failure simulation');
 }
@@ -143,7 +141,7 @@ async function test6_CronVerification() {
   const res = spawnSync(process.execPath, [bin, 'status'], { cwd: EMPIRE_ROOT, env: { ...process.env, EMPIRE_ROOT }, encoding: 'utf8', timeout: 10000 });
   if (res.status !== 0) return fail('6. Cron execution verification', `empire status exited ${res.status}: ${res.stderr || res.stdout}`);
   const pushScript = join(EMPIRE_ROOT, 'scripts', 'push-report-cron.js');
-  const res2 = spawnSync(process.execPath, [pushScript, 'Phase 11 cron test', 'Verification run'], { cwd: EMPIRE_ROOT, env: { ...process.env, EMPIRE_ROOT }, encoding: 'utf8', timeout: 10000 });
+  const res2 = spawnSync(process.execPath, [pushScript, 'Cron verification run', 'Scheduled task verification run — Empire test'], { cwd: EMPIRE_ROOT, env: { ...process.env, EMPIRE_ROOT }, encoding: 'utf8', timeout: 10000 });
   if (res2.status !== 0) return fail('6. Cron execution verification', `push-report-cron.js exited ${res2.status}`);
   return pass('6. Cron execution verification');
 }

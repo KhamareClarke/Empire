@@ -8,7 +8,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const EMPIRE_PROJECT_NAME = process.env.EMPIRE_PROJECT_NAME || 'unknown';
+
+function getProjectId() {
+  return process.env.EMPIRE_PROJECT_NAME || 'unknown';
+}
 
 function getServiceClient() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
@@ -29,7 +32,7 @@ export async function pushLead(lead = {}) {
   const { data, error } = await supabase
     .from('empire_leads')
     .insert({
-      project_id: EMPIRE_PROJECT_NAME,
+      project_id: getProjectId(),
       source: lead.source ?? null,
       email: lead.email ?? null,
       name: lead.name ?? null,
@@ -52,7 +55,7 @@ export async function pushReport(report = {}) {
   const { data, error } = await supabase
     .from('empire_reports')
     .insert({
-      project_id: EMPIRE_PROJECT_NAME,
+      project_id: getProjectId(),
       report_type: report.report_type ?? 'agent',
       severity: report.severity ?? 'info',
       title: report.title ?? null,
@@ -74,7 +77,7 @@ export async function pushReport(report = {}) {
 export async function logAgentActivity(activity = {}) {
   const supabase = getServiceClient();
   const row = {
-    project_id: EMPIRE_PROJECT_NAME,
+    project_id: getProjectId(),
     agent_id: activity.agent_id ?? 'unknown',
     action: activity.action ?? 'run',
     status: activity.status ?? 'started',

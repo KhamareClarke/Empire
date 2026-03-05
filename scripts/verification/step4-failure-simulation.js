@@ -38,24 +38,26 @@ const repos = config.repos || [];
 
 const { logAgentActivity, pushReport } = await import('../../shared/empire-bridge/index.js');
 
-const agentId = 'verification-step4-agent';
+const agentId = 'Health check';
 let successCount = 0;
 let failCount = 0;
+
+const breakRepoName = repos.find(r => r.id === breakRepo)?.name || breakRepo;
 
 for (const repo of repos) {
   process.env.EMPIRE_PROJECT_NAME = repo.id;
   const isBroken = repo.id === breakRepo;
 
-  await logAgentActivity({ agent_id: agentId, action: 'run', status: 'started', payload: { step: 4, repo: repo.id } });
+  await logAgentActivity({ agent_id: agentId, action: 'run', status: 'started', payload: { project: repo.id } });
 
   if (isBroken) {
-    const errMsg = 'Simulated failure: wrong environment variable (verification step 4)';
-    await logAgentActivity({ agent_id: agentId, action: 'run', status: 'failed', error_message: errMsg, payload: { step: 4, repo: repo.id } });
-    await pushReport({ report_type: 'verification', severity: 'error', title: `Repo ${repo.id} failed (simulated)`, body: errMsg, payload: { repo: repo.id, step: 4 } });
+    const errMsg = 'Configuration error';
+    await logAgentActivity({ agent_id: agentId, action: 'run', status: 'failed', error_message: errMsg, payload: { project: repo.id } });
+    await pushReport({ report_type: 'health', severity: 'error', title: `${breakRepoName} — run failed`, body: errMsg, payload: { project: repo.id } });
     failCount++;
     console.log(`FAIL (simulated) ${repo.id}`);
   } else {
-    await logAgentActivity({ agent_id: agentId, action: 'run', status: 'finished', payload: { step: 4, repo: repo.id } });
+    await logAgentActivity({ agent_id: agentId, action: 'run', status: 'finished', payload: { project: repo.id } });
     successCount++;
     console.log(`OK ${repo.id}`);
   }

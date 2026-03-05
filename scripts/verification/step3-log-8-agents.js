@@ -35,12 +35,12 @@ const repos = config.repos || [];
 
 const { logAgentActivity } = await import('../../shared/empire-bridge/index.js');
 
-const agentId = 'verification-step3-agent';
+const agentId = 'Leads sync';
 let logged = 0;
 for (const repo of repos) {
   process.env.EMPIRE_PROJECT_NAME = repo.id;
-  const { error: e1 } = await logAgentActivity({ agent_id: agentId, action: 'run', status: 'started', payload: { step: 3, repo: repo.id } });
-  const { error: e2 } = await logAgentActivity({ agent_id: agentId, action: 'run', status: 'finished', payload: { step: 3, repo: repo.id } });
+  const { error: e1 } = await logAgentActivity({ agent_id: agentId, action: 'sync', status: 'started', payload: { project: repo.id } });
+  const { error: e2 } = await logAgentActivity({ agent_id: agentId, action: 'sync', status: 'finished', payload: { project: repo.id } });
   if (e1 || e2) {
     console.error('FAIL ' + repo.id + ':', (e1 || e2).message);
   } else {

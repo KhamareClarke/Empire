@@ -39,10 +39,10 @@ let pushed = 0;
 for (const repo of repos) {
   process.env.EMPIRE_PROJECT_NAME = repo.id;
   const { error } = await pushLead({
-    source: 'verification-step2',
-    email: 'test-' + repo.id + '@verification.local',
-    name: 'Test Lead ' + repo.name,
-    payload: { step: 2, repo: repo.id, at: new Date().toISOString() }
+    source: 'Website',
+    email: null,
+    name: repo.name + ' — lead',
+    payload: { project: repo.id, at: new Date().toISOString() }
   });
   if (error) {
     console.error('FAIL ' + repo.id + ':', error.message);
